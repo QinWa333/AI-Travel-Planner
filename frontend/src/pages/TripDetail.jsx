@@ -25,16 +25,20 @@ export default function TripDetail() {
 
   const loadTripData = async () => {
     try {
+      console.log('加载行程详情，ID:', id);
       const [tripRes, expensesRes, summaryRes] = await Promise.all([
         tripsAPI.getById(id),
         expensesAPI.getByTrip(id),
         expensesAPI.getSummary(id)
       ]);
+      console.log('行程数据:', tripRes.data);
+      console.log('费用数据:', expensesRes.data);
       setTrip(tripRes.data.data);
       setExpenses(expensesRes.data.data || []);
       setSummary(summaryRes.data.data);
     } catch (error) {
-      message.error('加载失败');
+      console.error('加载失败:', error);
+      message.error('加载失败: ' + (error.response?.data?.detail || error.message));
     } finally {
       setLoading(false);
     }
@@ -98,6 +102,15 @@ export default function TripDetail() {
     return (
       <div style={{ textAlign: 'center', padding: 100 }}>
         <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!trip) {
+    return (
+      <div style={{ textAlign: 'center', padding: 100 }}>
+        <h2>行程不存在或加载失败</h2>
+        <Button onClick={() => navigate('/')}>返回首页</Button>
       </div>
     );
   }

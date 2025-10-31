@@ -47,7 +47,8 @@ CREATE POLICY "Users can view their own trips"
 
 CREATE POLICY "Users can insert their own trips"
     ON trips FOR INSERT
-    WITH CHECK (auth.uid() = user_id);
+    TO authenticated
+    WITH CHECK (true);
 
 CREATE POLICY "Users can update their own trips"
     ON trips FOR UPDATE

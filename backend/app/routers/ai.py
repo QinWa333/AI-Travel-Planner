@@ -40,7 +40,9 @@ async def generate_trip(
         model = get_model_name()
         
         system_prompt = """你是一位专业的旅行规划师。根据用户需求生成详细的旅行计划。
-        
+
+重要：你必须只返回纯 JSON 格式，不要有任何其他文字、解释或markdown标记。
+
 请以 JSON 格式返回，包含以下字段：
 {
   "title": "行程标题",
@@ -104,6 +106,17 @@ async def generate_trip(
         response = client.chat.completions.create(**request_params)
         
         ai_response = response.choices[0].message.content
+        
+        # 调试：打印 AI 返回的内容
+        print("=" * 50)
+        print("AI 返回内容：")
+        print(ai_response)
+        print("=" * 50)
+        
+        # 检查是否为空
+        if not ai_response or ai_response.strip() == "":
+            raise ValueError("AI 返回内容为空")
+        
         trip_data = json.loads(ai_response)
         
         return {
@@ -113,6 +126,9 @@ async def generate_trip(
         }
         
     except Exception as e:
+        import traceback
+        error_detail = f"AI 生成失败: {str(e)}\n{traceback.format_exc()}"
+        print(error_detail)  # 打印到控制台
         raise HTTPException(status_code=500, detail=f"AI 生成失败: {str(e)}")
 
 @router.post("/parse-expense")

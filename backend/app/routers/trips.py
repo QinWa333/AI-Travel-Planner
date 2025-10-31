@@ -14,6 +14,9 @@ async def create_trip(
 ):
     """创建新的旅行计划"""
     try:
+        print(f"收到保存请求，用户ID: {current_user.id}")
+        print(f"行程标题: {trip.title}")
+        
         trip_data = {
             "user_id": current_user.id,
             "title": trip.title,
@@ -36,6 +39,9 @@ async def create_trip(
             "data": response.data[0] if response.data else None
         }
     except Exception as e:
+        import traceback
+        print(f"保存失败: {str(e)}")
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"创建失败: {str(e)}")
 
 @router.get("/", response_model=dict)

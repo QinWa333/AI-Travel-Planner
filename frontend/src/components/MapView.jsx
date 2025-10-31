@@ -8,31 +8,32 @@ export default function MapView({ locations = [], center }) {
 
   useEffect(() => {
     if (!window.AMap) {
-      message.error('地图加载失败，请检查高德地图 API Key');
+      console.warn('高德地图未加载');
       return;
     }
 
-    // 初始化地图
-    if (!mapInstanceRef.current) {
-      mapInstanceRef.current = new window.AMap.Map(mapRef.current, {
-        zoom: 12,
-        center: center || [116.397428, 39.90923], // 默认北京
-        viewMode: '3D',
-      });
-    }
+    try {
+      // 初始化地图
+      if (!mapInstanceRef.current) {
+        mapInstanceRef.current = new window.AMap.Map(mapRef.current, {
+          zoom: 12,
+          center: center || [116.397428, 39.90923], // 默认北京
+          viewMode: '3D',
+        });
+      }
 
-    // 清除旧标记
-    markersRef.current.forEach(marker => marker.setMap(null));
-    markersRef.current = [];
+      // 清除旧标记
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
 
-    // 添加新标记
-    if (locations.length > 0) {
-      const bounds = new window.AMap.Bounds();
-      
-      locations.forEach((location, index) => {
-        // 地理编码获取坐标
-        const geocoder = new window.AMap.Geocoder();
-        geocoder.getLocation(location.address || location.location, (status, result) => {
+      // 添加新标记
+      if (locations.length > 0 && window.AMap.Geocoder) {
+        const bounds = new window.AMap.Bounds();
+        
+        locations.forEach((location, index) => {
+          // 地理编码获取坐标
+          const geocoder = new window.AMap.Geocoder();
+          geocoder.getLocation(location.address || location.location, (status, result) => {
           if (status === 'complete' && result.geocodes.length) {
             const lnglat = result.geocodes[0].location;
             
@@ -65,17 +66,29 @@ export default function MapView({ locations = [], center }) {
               infoWindow.open(mapInstanceRef.current, marker.getPosition());
             });
           }
+          });
         });
-      });
 
-      // 自动调整视野
-      setTimeout(() => {
-        if (markersRef.current.length > 0) {
-          mapInstanceRef.current.setBounds(bounds);
-        }
-      }, 1000);
+        // 自动调整视野
+        setTimeout(() => {
+          if (markersRef.current.length > 0) {
+            mapInstanceRef.current.setBounds(bounds);
+          }
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('地图初始化失败:', error);
     }
   }, [locations, center]);
+
+  if (!window.AMap) {
+    return (
+      <div style={{ textAlign: 'center', padding: '100px', color: '#999' }}>
+        <p>地图功能未配置</p>
+        <p>请在 index.html 中配置高德地图 API Key</p>
+      </div>
+    );
+  }
 
   return (
     <div 
