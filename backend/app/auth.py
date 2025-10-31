@@ -29,20 +29,19 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        # 解码 JWT token
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception
+        
+        # 返回用户信息（简化版本，只包含 user_id）
+        class User:
+            def __init__(self, user_id):
+                self.id = user_id
+        
+        return User(user_id)
     except JWTError:
-        raise credentials_exception
-    
-    # 从 Supabase 获取用户信息
-    try:
-        response = supabase.auth.get_user(token)
-        if not response.user:
-            raise credentials_exception
-        return response.user
-    except Exception:
         raise credentials_exception
 
 def verify_supabase_token(token: str):

@@ -84,10 +84,10 @@ npm run dev
 
 ## 📖 文档
 
-- **[下一步操作](NEXT_STEPS.md)** ⭐ - 配置 API Keys（必读）
-- [快速开始](QUICKSTART.md) - 安装和启动指南
-- [阿里云配置](ALIYUN_CONFIG.md) - 使用阿里云通义千问（推荐）
-- [部署指南](DEPLOYMENT.md) - 部署到生产环境
+1. **[快速开始](QUICKSTART.md)** - 安装和启动项目
+2. **[配置指南](NEXT_STEPS.md)** - 配置 API Keys（必读）
+3. [阿里云配置](ALIYUN_CONFIG.md) - 使用阿里云 AI（推荐）
+4. [部署指南](DEPLOYMENT.md) - 部署到生产环境
 
 ## 🛠️ 技术栈
 
