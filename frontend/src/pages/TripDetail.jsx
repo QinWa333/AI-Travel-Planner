@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Layout, Card, Button, Tabs, message, Modal, Form, Input, Select, InputNumber, Spin } from 'antd';
-import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { Layout, Card, Button, Tabs, message, Modal, Form, Input, Select, InputNumber, Spin, Popconfirm } from 'antd';
+import { ArrowLeftOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tripsAPI, expensesAPI, aiAPI } from '../services/api';
 import MapView from '../components/MapView';
@@ -44,6 +44,17 @@ export default function TripDetail() {
     }
   };
 
+  const handleDeleteTrip = async () => {
+    try {
+      await tripsAPI.delete(id);
+      message.success('行程已删除');
+      navigate('/');
+    } catch (error) {
+      console.error('删除失败:', error);
+      message.error('删除失败: ' + (error.response?.data?.detail || error.message));
+    }
+  };
+
   const handleVoiceExpense = async (text) => {
     try {
       const response = await aiAPI.parseExpense(text);
@@ -78,7 +89,10 @@ export default function TripDetail() {
   };
 
   const getMapLocations = () => {
-    if (!trip?.itinerary?.days) return [];
+    if (!trip?.itinerary?.days) {
+      console.log('没有行程数据');
+      return [];
+    }
     
     const locations = [];
     trip.itinerary.days.forEach(day => {
@@ -95,6 +109,7 @@ export default function TripDetail() {
         }
       });
     });
+    console.log('提取的地图位置:', locations);
     return locations;
   };
 
@@ -120,7 +135,10 @@ export default function TripDetail() {
       <Header style={{ 
         background: '#fff', 
         padding: '0 50px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
       }}>
         <Button 
           icon={<ArrowLeftOutlined />} 
@@ -129,6 +147,23 @@ export default function TripDetail() {
         >
           返回
         </Button>
+        
+        <Popconfirm
+          title="删除行程"
+          description="确定要删除这个行程吗？此操作无法撤销。"
+          onConfirm={handleDeleteTrip}
+          okText="确定"
+          cancelText="取消"
+          okButtonProps={{ danger: true }}
+        >
+          <Button 
+            icon={<DeleteOutlined />} 
+            danger
+            type="primary"
+          >
+            删除行程
+          </Button>
+        </Popconfirm>
       </Header>
       
       <Content style={{ padding: '30px 50px' }}>
@@ -142,7 +177,7 @@ export default function TripDetail() {
               label: '地图视图',
               children: (
                 <Card>
-                  <MapView locations={getMapLocations()} />
+                  <MapView locations={getMapLocations()} city={trip?.city} />
                 </Card>
               )
             },

@@ -29,6 +29,7 @@ class TripRequest(BaseModel):
 class TripCreate(BaseModel):
     title: str
     destination: str
+    city: Optional[str] = None  # 主要城市，用于地图定位
     start_date: date
     end_date: date
     budget: float
@@ -39,6 +40,7 @@ class TripCreate(BaseModel):
 
 class TripUpdate(BaseModel):
     title: Optional[str] = None
+    city: Optional[str] = None
     itinerary: Optional[dict] = None
     budget_breakdown: Optional[dict] = None
 
@@ -47,6 +49,7 @@ class TripResponse(BaseModel):
     user_id: str
     title: str
     destination: str
+    city: Optional[str] = None
     start_date: date
     end_date: date
     budget: float

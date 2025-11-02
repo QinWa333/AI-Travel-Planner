@@ -21,6 +21,7 @@ async def create_trip(
             "user_id": current_user.id,
             "title": trip.title,
             "destination": trip.destination,
+            "city": trip.city,
             "start_date": trip.start_date.isoformat(),
             "end_date": trip.end_date.isoformat(),
             "budget": trip.budget,
@@ -102,6 +103,8 @@ async def update_trip(
         
         if trip_update.title:
             update_data["title"] = trip_update.title
+        if trip_update.city:
+            update_data["city"] = trip_update.city
         if trip_update.itinerary:
             update_data["itinerary"] = trip_update.itinerary
         if trip_update.budget_breakdown:

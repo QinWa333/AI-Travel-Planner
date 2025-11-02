@@ -47,6 +47,7 @@ async def generate_trip(
 {
   "title": "行程标题",
   "destination": "目的地",
+  "city": "主要城市名称（如：北京、上海、西安、杭州等，用于地图定位）",
   "start_date": "YYYY-MM-DD",
   "end_date": "YYYY-MM-DD",
   "budget": 预算金额(数字),
