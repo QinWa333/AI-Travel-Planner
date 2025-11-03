@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Layout, Card, Input, Button, message, Steps, Space } from 'antd';
 import { ArrowLeftOutlined, SendOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -14,9 +14,15 @@ export default function CreateTrip() {
   const [loading, setLoading] = useState(false);
   const [generatedTrip, setGeneratedTrip] = useState(null);
   const navigate = useNavigate();
+  const lastTranscriptRef = useRef('');
 
   const handleVoiceTranscript = (text) => {
-    setPrompt(text);
+    // 防止重复调用
+    if (text && text !== lastTranscriptRef.current) {
+      lastTranscriptRef.current = text;
+      setPrompt(text);
+      console.log('语音识别最终结果:', text);
+    }
   };
 
   const handleGenerate = async () => {

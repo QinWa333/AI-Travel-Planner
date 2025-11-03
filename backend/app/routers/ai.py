@@ -39,9 +39,16 @@ async def generate_trip(
         client = get_ai_client()
         model = get_model_name()
         
+        # 获取明天的日期
+        from datetime import timedelta
+        tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+        
         system_prompt = """你是一位专业的旅行规划师。根据用户需求生成详细的旅行计划。
 
-重要：你必须只返回纯 JSON 格式，不要有任何其他文字、解释或markdown标记。
+重要规则：
+1. 你必须只返回纯 JSON 格式，不要有任何其他文字、解释或markdown标记
+2. 行程开始日期必须从明天（""" + tomorrow + """）或之后开始，不要使用今天或过去的日期
+3. 如果用户没有指定具体日期，默认从明天开始
 
 请以 JSON 格式返回，包含以下字段：
 {

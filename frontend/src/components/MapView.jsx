@@ -9,6 +9,11 @@ export default function MapView({ locations = [], center, city }) {
       return;
     }
 
+    // 清除旧的标记
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.clearMap();
+    }
+
     // 国内热门城市坐标库
     const cityCenters = {
       // 直辖市
@@ -165,11 +170,73 @@ export default function MapView({ locations = [], center, city }) {
         zoom: 12,
         center: center || defaultCenter,
         viewMode: '2D',
+        mapStyle: 'amap://styles/normal', // 使用正常彩色地图
       });
     } else {
       // 如果地图已存在，更新中心点
       mapInstanceRef.current.setCenter(center || defaultCenter);
       mapInstanceRef.current.setZoom(12);
+    }
+
+    // 添加地点标记
+    if (locations.length > 0 && mapInstanceRef.current) {
+      // 加载地理编码插件
+      window.AMap.plugin('AMap.Geocoder', () => {
+        const geocoder = new window.AMap.Geocoder({
+          city: city || '全国'
+        });
+        
+        locations.forEach((location, index) => {
+          // 使用地理编码获取坐标
+          geocoder.getLocation(location.location, (status, result) => {
+            if (status === 'complete' && result.geocodes.length > 0) {
+              const lnglat = result.geocodes[0].location;
+              
+              // 创建标记
+              const marker = new window.AMap.Marker({
+                position: lnglat,
+                title: location.title,
+                label: {
+                  content: `<div style="background: white; padding: 4px 8px; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size: 12px;">${index + 1}. ${location.title}</div>`,
+                  offset: new window.AMap.Pixel(0, -40)
+                }
+              });
+
+              // 创建信息窗口
+              const infoWindow = new window.AMap.InfoWindow({
+                content: `
+                  <div style="padding: 12px; min-width: 200px;">
+                    <h4 style="margin: 0 0 8px 0; color: #1890ff;">${location.title}</h4>
+                    <p style="margin: 4px 0; color: #666;"><strong>📍 地点:</strong> ${location.location}</p>
+                    <p style="margin: 4px 0; color: #666;"><strong>🕐 时间:</strong> ${location.time || '未指定'}</p>
+                    <p style="margin: 4px 0; color: #666;"><strong>💰 费用:</strong> ¥${location.estimated_cost || 0}</p>
+                    ${location.description ? `<p style="margin: 8px 0 0 0; color: #999; font-size: 12px;">${location.description}</p>` : ''}
+                  </div>
+                `,
+                offset: new window.AMap.Pixel(0, -30)
+              });
+
+              // 点击标记显示信息窗口
+              marker.on('click', () => {
+                infoWindow.open(mapInstanceRef.current, lnglat);
+              });
+
+              mapInstanceRef.current.add(marker);
+            } else {
+              console.log('地理编码失败:', location.location, status);
+            }
+          });
+        });
+
+        // 如果有多个地点，自动调整视野
+        if (locations.length > 1) {
+          setTimeout(() => {
+            if (mapInstanceRef.current) {
+              mapInstanceRef.current.setFitView();
+            }
+          }, 1500);
+        }
+      });
     }
   }, [locations, center, city]);
 

@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button, message } from 'antd';
 import { AudioOutlined, AudioMutedOutlined } from '@ant-design/icons';
 import speechService from '../services/speech';
 
 export default function VoiceInput({ onTranscript, placeholder = "点击麦克风开始语音输入" }) {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
+  const isListeningRef = useRef(false);
+
+  // 清理函数
+  useEffect(() => {
+    return () => {
+      if (isListeningRef.current) {
+        speechService.stopListening();
+      }
+    };
+  }, []);
 
   const handleStartListening = () => {
     if (!speechService.isSupported()) {
@@ -14,19 +23,25 @@ export default function VoiceInput({ onTranscript, placeholder = "点击麦克�
     }
 
     setIsListening(true);
-    setTranscript('');
+    isListeningRef.current = true;
 
     speechService.startListening(
       (text, isFinal) => {
-        setTranscript(text);
-        if (isFinal) {
+        // 只在最终结果时调用
+        if (isFinal && isListeningRef.current) {
+          console.log('收到最终结果:', text);
+          isListeningRef.current = false;
+          setIsListening(false);
           onTranscript?.(text);
         }
       },
       () => {
+        // 录音结束
+        isListeningRef.current = false;
         setIsListening(false);
       },
       (error) => {
+        isListeningRef.current = false;
         setIsListening(false);
         message.error(`语音识别错误: ${error}`);
       }
@@ -34,10 +49,15 @@ export default function VoiceInput({ onTranscript, placeholder = "点击麦克�
   };
 
   const handleStopListening = () => {
+    const finalText = speechService.getCurrentTranscript?.();
+    
     speechService.stopListening();
+    isListeningRef.current = false;
     setIsListening(false);
-    if (transcript) {
-      onTranscript?.(transcript);
+    
+    if (finalText) {
+      console.log('手动停止，最终结果:', finalText);
+      onTranscript?.(finalText);
     }
   };
 
@@ -54,7 +74,7 @@ export default function VoiceInput({ onTranscript, placeholder = "点击麦克�
       </Button>
       {isListening && (
         <span style={{ color: '#ff4d4f', animation: 'pulse 1.5s infinite' }}>
-          正在录音... {transcript}
+          🎤 正在录音，请说话...
         </span>
       )}
     </div>
