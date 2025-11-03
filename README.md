@@ -85,7 +85,8 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_KEY=your_supabase_anon_key
 
 # 阿里云通义千问 API Key（供助教使用，有效期至 2025-05-01）
-DASHSCOPE_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
+# 请在此处填写你的真实 API Key
+DASHSCOPE_API_KEY=sk-your-actual-api-key-here
 
 # JWT 密钥（可以使用默认值）
 JWT_SECRET=ai-travel-planner-secret-key-2024
