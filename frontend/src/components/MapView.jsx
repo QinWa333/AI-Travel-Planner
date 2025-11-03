@@ -1,11 +1,24 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { loadAMap } from '../utils/loadAMap';
 
 export default function MapView({ locations = [], center, city }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+
+  // 加载高德地图 API
+  useEffect(() => {
+    loadAMap()
+      .then(() => {
+        setIsMapLoaded(true);
+      })
+      .catch((error) => {
+        console.error('高德地图加载失败:', error);
+      });
+  }, []);
 
   useEffect(() => {
-    if (!window.AMap || !mapRef.current) {
+    if (!isMapLoaded || !window.AMap || !mapRef.current) {
       return;
     }
 
@@ -238,7 +251,7 @@ export default function MapView({ locations = [], center, city }) {
         }
       });
     }
-  }, [locations, center, city]);
+  }, [isMapLoaded, locations, center, city]);
 
   // 组件卸载时清理
   useEffect(() => {
