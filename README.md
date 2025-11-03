@@ -87,33 +87,14 @@ git clone https://github.com/QinWa333/AI-Travel-Planner.git
 cp .env.example .env
 ```
 ##### 2.2修改.env
-* 用下面文档全部替换即可
+* 用作业中Readme文档中给出的.env全部替换即可（助教老师~
 * 使用阿里云的key，替换mykey
-```
-# Supabase Configuration
-SUPABASE_URL=https://jqdtuhihochqccywxjij.supabase.co
-SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZHR1aGlob2NocWNjeXd4amlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4OTA4NzcsImV4cCI6MjA3NzQ2Njg3N30.84nYzDPJlB4UTNWQqRC66fK5Umd8JRFDnqpd0Fv9t7M
-
-# AI Configuration
-DASHSCOPE_API_KEY=mykey
-# OPENAI_API_KEY=not-set
-
-
-SECRET_KEY=your-secret-key-at-least-32-characters-long-for-jwt-token-generation
-```
 ##### 2.3在前端配置科大讯飞语音的key
 ```
 cd frontend
 cp .env.example .env
-用这个替换即可
-# 科大讯飞语音识别（前端专用）
-VITE_XFYUN_APP_ID=6c1a1016
-VITE_XFYUN_API_KEY=8638638a0656b8093e9d6ff4a1b5ec2f
-VITE_XFYUN_API_SECRET=ZGRjMjkzZDY0ZmUyNzY2MTVhOGU1ZWVi
-
-# 后端 API 地址
-VITE_API_URL=http://localhost:8000
 ```
+* 用作业中Readme文档中给出的frontend/.env全部替换即可（助教老师~
 ```
 # 回到主目录
 cd ..
@@ -168,46 +149,6 @@ docker-compose logs -f
 
 ```bash
 docker-compose down
-```
-
-## 🔑 配置说明
-
-### 环境变量 (.env)
-
-编辑 `.env` 文件，填入以下配置：
-
-```env
-# Supabase 配置（需要自己注册 https://supabase.com）
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your_supabase_anon_key
-
-# 阿里云通义千问 API Key（供助教使用，有效期至 2025-05-01）
-# 请在此处填写你的真实 API Key
-DASHSCOPE_API_KEY=sk-your-actual-api-key-here
-
-# JWT 密钥（可以使用默认值）
-JWT_SECRET=ai-travel-planner-secret-key-2024
-```
-
-### Supabase 数据库设置
-
-1. 注册 https://supabase.com（免费）
-2. 创建新项目
-3. 在 SQL Editor 执行 `backend/migrations/init.sql`
-4. 复制项目 URL 和 anon key 到 `.env`
-
-## 🔧 本地开发（不使用 Docker）
-
-```bash
-# 后端
-cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-
-# 前端
-cd frontend
-npm install
-npm run dev
 ```
 
 ## 🛠️ 技术栈详解
