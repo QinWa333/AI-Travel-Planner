@@ -77,31 +77,68 @@
 安装 [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 ### 方法一：使用预构建镜像（推荐，更快）
-
-```bash
-# 1. 下载镜像文件
-# 下载地址: https://pan.baidu.com/s/xxxxx (提取码: xxxx)
-# 或: https://drive.google.com/xxxxx
-
-# 2. 加载镜像
-docker load -i ai-travel-planner.tar
-# 或解压后加载: gunzip ai-travel-planner.tar.gz && docker load -i ai-travel-planner.tar
-
-# 3. 克隆项目（只需要配置文件）
-git clone https://github.com/your-username/AI-Travel-Planner.git
-cd AI-Travel-Planner
-
-# 4. 配置环境变量
+#### 1.克隆代码到本地
+```
+git clone https://github.com/QinWa333/AI-Travel-Planner.git
+```
+#### 2.配置.env文件
+##### 2.1复制根目录下 .env.example
+```
 cp .env.example .env
-# 编辑 .env 文件，填入配置（见下方）
+```
+##### 2.2修改.env
+* 用下面文档全部替换即可
+* 使用阿里云的key，替换mykey
+```
+# Supabase Configuration
+SUPABASE_URL=https://jqdtuhihochqccywxjij.supabase.co
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZHR1aGlob2NocWNjeXd4amlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4OTA4NzcsImV4cCI6MjA3NzQ2Njg3N30.84nYzDPJlB4UTNWQqRC66fK5Umd8JRFDnqpd0Fv9t7M
 
-# 5. 启动服务（直接使用加载的镜像，1分钟启动）
+# AI Configuration
+DASHSCOPE_API_KEY=mykey
+# OPENAI_API_KEY=not-set
+
+
+SECRET_KEY=your-secret-key-at-least-32-characters-long-for-jwt-token-generation
+```
+##### 2.3在前端配置科大讯飞语音的key
+```
+cd frontend
+cp .env.example .env
+用这个替换即可
+# 科大讯飞语音识别（前端专用）
+VITE_XFYUN_APP_ID=6c1a1016
+VITE_XFYUN_API_KEY=8638638a0656b8093e9d6ff4a1b5ec2f
+VITE_XFYUN_API_SECRET=ZGRjMjkzZDY0ZmUyNzY2MTVhOGU1ZWVi
+
+# 后端 API 地址
+VITE_API_URL=http://localhost:8000
+```
+```
+# 回到主目录
+cd ..
+```
+#### 3.下载docker环境
+##### 3.1加载项目中提供的docker文件
+```
+docker load -i ai-travel-planner.tar
+```
+##### 3.2启动服务
+```
 docker-compose up -d
-
-# 6. 访问应用
-# 前端: http://localhost
-# 后端: http://localhost:8000
-# API文档: http://localhost:8000/docs
+```
+#### 4.启动web
+##### 4.1访问前端
+```
+http://localhost
+```
+##### 4.2 查看后端log（必要时
+```
+docker-compose logs -f
+```
+#### 关闭退出
+```
+docker-compose down
 ```
 
 ### 方法二：从源码构建
