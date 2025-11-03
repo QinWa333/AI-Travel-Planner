@@ -11,7 +11,7 @@ services:
       - SUPABASE_KEY=${SUPABASE_KEY}
       - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-not-set}
-      - JWT_SECRET=${JWT_SECRET}
+      - SECRET_KEY=${SECRET_KEY}
     restart: unless-stopped
     networks:
       - ai-travel-network
